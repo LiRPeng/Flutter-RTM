@@ -326,9 +326,14 @@ class AgoraRtmClient {
 
   ///添加房间属性
   Future<void> addOrUpdateChannelAttributes(
-      String channelId, List<Map<String, String>> attributes) async {
-    final res = await _callNative("addOrUpdateChannelAttributes",
-        {'channelId': channelId, "attributes": attributes});
+      String channelId,
+      List<Map<String, String>> attributes,
+      bool enableNotificationToChannelMembers) async {
+    final res = await _callNative("addOrUpdateChannelAttributes", {
+      'channelId': channelId,
+      "attributes": attributes,
+      "enableNotificationToChannelMembers": enableNotificationToChannelMembers
+    });
     if (res["errorCode"] != 0)
       throw AgoraRtmClientException(
           "addOrUpdateChannelAttributes failed errorCode:${res['errorCode']}",
@@ -336,17 +341,17 @@ class AgoraRtmClient {
   }
 
   ///获取房间人数
-  Future<Map<String,int>> getChannelMemberCount(List<String> channelIds) async {
-    final res = await _callNative("getChannelMemberCount",
-        {'channelIds': channelIds});
-    if (res["errorCode"] != 0){
+  Future<Map<String, int>> getChannelMemberCount(
+      List<String> channelIds) async {
+    final res =
+        await _callNative("getChannelMemberCount", {'channelIds': channelIds});
+    if (res["errorCode"] != 0) {
       throw AgoraRtmClientException(
           "getChannelMemberCount failed errorCode:${res['errorCode']}",
           res['errorCode']);
     }
-    return Map<String,dynamic>.from(res["attributes"]);
+    return Map<String, dynamic>.from(res["attributes"]);
   }
-
 
   ///获取房间属性
   Future<Map<String, dynamic>> getChannelAttributesByKeys(
