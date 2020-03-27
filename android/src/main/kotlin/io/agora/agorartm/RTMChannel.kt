@@ -1,6 +1,7 @@
 package io.agora.agorartm
 
 import android.os.Handler
+import com.google.gson.Gson
 import io.agora.rtm.RtmChannelAttribute
 import io.agora.rtm.RtmChannelListener
 import io.agora.rtm.RtmChannelMember
@@ -32,7 +33,9 @@ class RTMChannel : RtmChannelListener, EventChannel.StreamHandler {
     }
 
     override fun onAttributesUpdated(p0: MutableList<RtmChannelAttribute>?) {
-        
+        sendChannelEvent("onAttributesUpdated", hashMapOf(
+                "attributes" to Gson().toJson(p0)
+        ))
     }
 
     override
@@ -65,7 +68,9 @@ class RTMChannel : RtmChannelListener, EventChannel.StreamHandler {
     }
 
     override fun onMemberCountUpdated(p0: Int) {
-
+        sendChannelEvent("onMemberCountUpdated", hashMapOf(
+                "memberCount" to p0
+        ))
     }
 
     private fun sendChannelEvent(eventName: String, params: HashMap<Any, Any>) {
