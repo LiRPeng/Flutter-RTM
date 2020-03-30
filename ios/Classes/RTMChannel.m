@@ -57,7 +57,23 @@
   }
 }
 
+
 #pragma - AgoraRtmChannelDelegate
+- (void)channel:(AgoraRtmChannel *)channel attributeUpdate:(NSArray<AgoraRtmChannelAttribute *> *)attributes{
+     NSError *error = nil;
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:attributes options:NSJSONWritingPrettyPrinted error:&error];
+        NSString *str= [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    [self sendChannelEvent:@"onAttributesUpdated" params:@{
+        @"attributes": str
+    }];
+}
+
+- (void)channel:(AgoraRtmChannel *)channel memberCount:(int)count{
+    [self sendChannelEvent:@"onMemberCountUpdated" params:@{
+        @"memberCount": [NSNumber numberWithInt:count]
+    }];
+}
+
 - (void)channel:(AgoraRtmChannel *)channel memberJoined:(AgoraRtmMember *)member {
   [self sendChannelEvent:@"onMemberJoined" params:@{@"userId": member.userId, @"channelId": member.channelId}];
 }
@@ -65,7 +81,6 @@
 - (void)channel:(AgoraRtmChannel *)channel memberLeft:(AgoraRtmMember *)member {
   [self sendChannelEvent:@"onMemberLeft" params:@{@"userId": member.userId, @"channelId": member.channelId}];
 }
-
 - (void)channel:(AgoraRtmChannel *)channel messageReceived:(AgoraRtmMessage *)message fromMember:(AgoraRtmMember *)member {
   [self sendChannelEvent:@"onMessageReceived" params:@{@"userId": member.userId,
            @"channelId": member.channelId,

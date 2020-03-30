@@ -149,6 +149,49 @@
       result(@{@"errorCode": @(errorCode)});
     }];
   }
+  else if([@"addOrUpdateChannelAttributes" isEqualToString:name]){
+      NSString *channelId=args[@"channelId"];
+      NSArray *attributes=args[@"attributes"];
+      Boolean *enableNotificationToChannelMembers=(Boolean) args[@"enableNotificationToChannelMembers"];
+      NSMutableArray *rtmChannelAttributes = [[NSMutableArray alloc] init];
+      for (NSDictionary* item in attributes) {
+          AgoraRtmChannelAttribute *attribute =[[AgoraRtmChannelAttribute alloc] init];
+          attribute.key = item[@"key"];
+          attribute.value = item[@"value"];
+          [rtmChannelAttributes addObject:attribute];
+      }
+      
+      AgoraRtmChannelAttributeOptions *options=[[AgoraRtmChannelAttributeOptions alloc] init];
+      options.enableNotificationToChannelMembers=enableNotificationToChannelMembers;
+      [rtmClient.kit addOrUpdateChannel:channelId Attributes:rtmChannelAttributes Options:options completion:^(AgoraRtmProcessAttributeErrorCode errorCode) {
+        result(@{@"errorCode": @(errorCode)});
+      }];
+
+  }
+  else if([@"getChannelAttributesByKeys" isEqualToString:name]){
+      NSString *channelId=args[@"channelId"];
+      NSArray *keys=args[@"keys"];
+      [rtmClient.kit getChannelAttributes:channelId ByKeys:keys completion:^(NSArray<AgoraRtmChannelAttribute *> * _Nullable attributes, AgoraRtmProcessAttributeErrorCode errorCode) {
+           NSMutableDictionary *channelAttributes = [[NSMutableDictionary alloc] init];
+          for (AgoraRtmChannelAttribute *item in attributes) {
+            [channelAttributes setObject:item.value forKey:item.key];
+          }
+          result(@{@"errorCode": @(errorCode),
+                   @"attributes": channelAttributes});
+      }];
+
+  }
+  else if([@"getChannelMemberCount" isEqualToString:name]){
+      NSArray *channelIds=args[@"channelIds"];
+      [rtmClient.kit getChannelMemberCount:channelIds completion:^(NSArray<AgoraRtmChannelMemberCount *> *channelMemberCounts, AgoraRtmChannelMemberCountErrorCode errorCode) {
+          NSMutableDictionary *attributes = [[NSMutableDictionary alloc] init];
+          for (AgoraRtmChannelMemberCount *item in channelMemberCounts){
+              [attributes setObject:[NSNumber numberWithInt:item.count] forKey:item.channelId];
+          }
+          result(@{@"errorCode": @(errorCode),
+                   @"attributes": attributes});
+      }];
+  }
   else if ([@"deleteLocalUserAttributesByKeys" isEqualToString:name]) {
     NSArray *keys = args[@"keys"] != [NSNull null] ? args[@"keys"] : nil;
     [rtmClient.kit deleteLocalUserAttributesByKeys:keys completion:^(AgoraRtmProcessAttributeErrorCode errorCode) {
