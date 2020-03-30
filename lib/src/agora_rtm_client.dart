@@ -341,7 +341,7 @@ class AgoraRtmClient {
   }
 
   ///获取房间人数
-  Future<Map<String, int>> getChannelMemberCount(
+  Future<Map<String, dynamic>> getChannelMemberCount(
       List<String> channelIds) async {
     final res =
         await _callNative("getChannelMemberCount", {'channelIds': channelIds});
