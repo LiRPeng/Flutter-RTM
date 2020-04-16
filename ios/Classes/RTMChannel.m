@@ -61,11 +61,29 @@
 #pragma - AgoraRtmChannelDelegate
 - (void)channel:(AgoraRtmChannel *)channel attributeUpdate:(NSArray<AgoraRtmChannelAttribute *> *)attributes{
      NSError *error = nil;
-        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:attributes options:NSJSONWritingPrettyPrinted error:&error];
-        NSString *str= [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-    [self sendChannelEvent:@"onAttributesUpdated" params:@{
-        @"attributes": str
-    }];
+         if (attributes == nil) {
+             [self sendChannelEvent:@"onAttributesUpdated" params:@{
+                 @"attributes": ""
+             }];
+             return
+         }
+         NSData *jsonData = [NSJSONSerialization dataWithJSONObject:attributes options:NSJSONWritingPrettyPrinted error:&error];
+         if (jsonData == nil) {
+             [self sendChannelEvent:@"onAttributesUpdated" params:@{
+                 @"attributes": ""
+             }];
+             return
+         }
+         NSString *str= [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+         if (str == nil) {
+             [self sendChannelEvent:@"onAttributesUpdated" params:@{
+                 @"attributes": ""
+             }];
+             return
+         }
+         [self sendChannelEvent:@"onAttributesUpdated" params:@{
+             @"attributes": str
+         }];
 }
 
 - (void)channel:(AgoraRtmChannel *)channel memberCount:(int)count{
