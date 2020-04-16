@@ -107,7 +107,7 @@ class RtmChannelAttribute {
   String key;
   String value;
   String userId;
-  BigInt updateTs;
+  int updateTs;
 
   RtmChannelAttribute.fromJson(Map<dynamic, dynamic> json)
       : key = json['key'],
